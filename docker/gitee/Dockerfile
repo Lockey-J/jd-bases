@@ -1,5 +1,5 @@
 FROM node:lts-alpine
-LABEL maintainer="Evine Deng <evinedeng@foxmail.com>"
+LABEL maintainer="rystudy <lockey0223@gmail.com>"
 ARG JD_BASE_URL=https://git.rylearn.xyz/rylearn/jd-base
 ARG JD_BASE_BRANCH=master
 ARG JD_SCRIPTS_URL=https://gitee.com/lxk0301/jd_scripts
