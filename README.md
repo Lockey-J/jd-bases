@@ -12,7 +12,7 @@
 
 5. 检测配置文件模板`config.sh.sample`是否升版，如有升版，发出通知；
 
-6. 其他还有若干功能，查看 [本文件](https://github.com/EvineDeng/jd-base/blob/v3/git_pull.sh) 注释即可看到。
+6. 其他还有若干功能，查看 [本文件](https://git.rylearn.xyz/rylearn/jd-base/blob/v3/git_pull.sh) 注释即可看到。
 
 ### export_sharecodes.sh
 
@@ -76,7 +76,7 @@
 
 如需使用docker-compose，请前往 [这里](https://github.com/docker/compose/releases/) 下载最新版本的文件，放在本机 `/usr/local/bin`下，并重命名为`docker-compose`。
 
-然后参考本仓库的 [docker-compose.yml](https://github.com/EvineDeng/jd-base/blob/v3/docker/docker-compose.yml) 准备好你自己的`docker-compose.yml`，然后部署：
+然后参考本仓库的 [docker-compose.yml](https://git.rylearn.xyz/rylearn/jd-base/src/branch/master/docker/docker-compose.yml) 准备好你自己的`docker-compose.yml`，然后部署：
 
 ```shell
 ## cd 到docker-compose.yml的存放路径下
