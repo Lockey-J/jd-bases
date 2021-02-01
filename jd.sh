@@ -2,8 +2,8 @@
 
 ## Author: Evine Deng
 ## Source: https://github.com/EvineDeng/jd-base
-## Modified： 2021-01-27
-## Version： v3.8.0
+## Modified： 2021-02-01
+## Version： v3.8.2
 
 ## 路径
 ShellDir=${JD_DIR:-$(cd $(dirname $0); pwd)}
@@ -105,14 +105,12 @@ function Combin_All {
   export BOOKSHOP_SHARECODES=$(Combin_Sub ForOtherBookShop "19474863c786486fa5d108e06ba4f51c@03b5475d429b4aa5ba16a18d541739f8@c3b10451746446ba984e74242f5e58f6")
   export JD_CASH_SHARECODES=$(Combin_Sub ForOtherCash "eU9YaLjgb_kl9G2HnSIS3w@XkJ1LrPwZ_Uv@eU9YN7DHBbx4mS2olRRp" "Vl1uMrmyZvs@eU9YarrjM_53p27dyXQa3g@9Jq0uXglsVCqKd5kEv-D@9YmhuUccv2W6J9VsHue5AQqJ" "eU9YarjhYqonpDrTzXcR1Q@eU9Ya77gZK5z-TqHn3UWhQ@eU9Yaui2ZP4gpG-Gz3EThA@eU9YaeizbvQnpG_SznIS0w")
   export JDNIAN_SHARECODES=$(Combin_Sub ForOtherNian "cgxZdTXtIO6I4wvKDQb7uYik24iNYjg8COG-Pv0UKkAGBeHETRQIhsSu-Qg@cgxZUjjAZuWY6wfAREnKqB4EagOGP96M54KS@cgxZdTXtf-aviU6XYEbUsRid409-iXebX2MBLykLK-iubf56d8X71Uw")
-  if [[ $(date -u "+%H") == 12 ]] || [[ $(date -u "+%H") == 13 ]]; then
-    export JDNIANPK_SHARECODES=$(Combin_Sub ForOtherNianPk "IgNWdiLGaPavrFeXXWqpo92CVx1rlFXa1hw@IgNWdiLGaPYPW6QdgLVwfWRfHi2sIXbO_6hkp5Nr2iQcqjh14hEp3rCPZEl-yN5DMhuIkmTMvwsMySwsQBXxWw@IgNWdiLGaPaAvmHPDgH8vAJv1gVmRQDCnfIVBGR1YL3lZ0Mg7ZEiozjTjCdf89ov@IgNWdiLGaPbY7QnMDA2h6oo8Zl9cHaLDgH6QPmTn0q2RXfS87n0@IgNWdiLGaPavrFeXXQWp6ManqCzbdRZ7medtakVd_L0@IgNWdiLGaPaAvmHPXlT87UNYCPQXNpYWPdp-07g7zX8y2QkXwRtY2WnqEQ20Kpyh" "IgNWdiLGaPaAvmHPXFatuVqLKY15hpHmyg4fhXsFsRff2aOCWUu0_7H0YKL4vTvw@IgNWdiLGaPYMeJgco6twdnEMl2rrhxlHqH_OGEhGAmaFSuLs3fmrFj0xyOcRB27Ueur0pQ@IgNWdiLGaPYNa40cnJJ-Q3yU2CnzdMURKoahzOZQqq0TG7hyAFOUIXwKLVE0fw@IgNWdiLGaPaAvmHOWlerveOAjRDDS82JlJNWJL9xrIGrdFL_OGjK2z6Io6AIAbXG@IgNWdiLGaPaAvmHPDAGr7dyADPlqIEeTrfW5IA1FeA8sbmZ48J_ipjzhagoDxvop@IgNWdiLGaPaAvmHMDASh59_hel_M5qSDfbknFBwDTlaynaDxiGO6-aTtWJPQkFxA")
-  else
-    export JDNIANPK_SHARECODES=$(Combin_Sub ForOtherNianPk)
-  fi
+  export JDNIANPK_SHARECODES=$(Combin_Sub ForOtherNianPk "IgNWdiLGaPaAvmGSVHDKr5QIwk4ezq-QdYqDFvwaTl0oR9Fmv3b7nfD__ffXww") 
   export JDSXSY_SHARECODES=$(Combin_Sub ForOtherImmortal "23xIs4YwE5Z7HdgnUcxRT-XlSoXoJLmBE@56xIs4YwE5Z7G8-z3rXfTNliqVYXz9M6JRXG-yH8Vx4dLQzrizP4dLTPyH1_nW4EszjVqzvYCF7YE6CoNmvdjLBMjQ_@43xIs4YwE5Z7DsWOzDSP_d8Rjea5vaaX61gfhVs6SfEGnwcZB9wEJX2m2nHKOaC6Zjyw" "34xIs4YwE5Z7HhWvhuV0OSNsWxu4l5KyQo6VAKcMVw0BbhzvPXXg@43xIs4YwE5Z7DsWOzDSPOBTEaue3ty6EyxKwJhHK0IpkCccZB9wBAAi2jzGjO7Zk0NBQ@46xIs4YwE5Z7G9J6kzXVQUmik-F9Rd23gLTdzlTswGj7g5F1Q_VaEE-_9VqfmrrK7GkGwYKFc" "40xIs4YwE5Z7G9Wz1fXbiNaj7BIJ_cEtkCA14e3w3wC_EWRE9DEWJLOHy4bS9CN@43xIs4YwE5Z7DsWOzDSPPhRRrG8MhYR4xhrORXRDTIPqsocZB9wBIC2jyBAueqKUNS5w@28xIs4YwE5Z7HdgnUcxRT_3luPSlp4IXoJLmBFTjzk")
   export JDSGMH_SHARECODES=$(Combin_Sub ForOtherSgmh "T0225KkcREpL_FHUJRmmwqYLfQCjVWmIaW5kRrbA@T012w6QxAkFb9F3eCjVWmIaW5kRrbA@T0205KkcG0JslhSJSFmJypBwCjVWmIaW5kRrbA")
   export JSMOBILEFESTIVAL_SHARECODES=$(Combin_Sub ForOtherJdMobileFestival)
+  export JD818_SHARECODES=$(Combin_Sub ForOtherJd818)
+  export JDNY_SHARECODES=$(Combin_Sub ForOtherNY "oMZeX7IaqY5UBuFjYeFx9vga96pSzXeRIHC7fpYzhsfurkVT@h8tzGbkKoYJeT659N_w8s41cY9FcxP0nYvVkHaQ@oMZeALo9w8sJa6FMadcKsz9KbZiMYZDfW-nlTb5MHIUqT1A")
 }
 
 ## 转换JD_BEAN_SIGN_STOP_NOTIFY或JD_BEAN_SIGN_NOTIFY_SIMPLE
