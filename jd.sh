@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-## Author: Evine Deng
-## Source: https://github.com/EvineDeng/jd-base
 ## Modified： 2021-02-01
 ## Version： v3.8.2
 
@@ -110,7 +108,7 @@ function Combin_All {
   export JDSGMH_SHARECODES=$(Combin_Sub ForOtherSgmh "T0225KkcREpL_FHUJRmmwqYLfQCjVWmIaW5kRrbA@T012w6QxAkFb9F3eCjVWmIaW5kRrbA@T0205KkcG0JslhSJSFmJypBwCjVWmIaW5kRrbA")
   export JSMOBILEFESTIVAL_SHARECODES=$(Combin_Sub ForOtherJdMobileFestival)
   export JD818_SHARECODES=$(Combin_Sub ForOtherJd818)
-  export JDNY_SHARECODES=$(Combin_Sub ForOtherNY "oMZeX7IaqY5UBuFjYeFx9vga96pSzXeRIHC7fpYzhsfurkVT@h8tzGbkKoYJeT659N_w8s41cY9FcxP0nYvVkHaQ@oMZeALo9w8sJa6FMadcKsz9KbZiMYZDfW-nlTb5MHIUqT1A")
+  export JDNY_SHARECODES=$(Combin_Sub ForOtherNY "oMZeX7IaqY5UBuFjYeFx9vga96pSzXeRIHC7fpYzhsfurkVT@h8tzGbkKoYJeT659N_w8s41cY9FcxP0nYvVkHaQ@oMZeALo9w8sJa6FMadcKsz9KbZiMYZDfW-nlTb5MHIUqT1A" "oMZeXLQaotkCC7ZjY7Z1rFHCHnz7lx2ZfaUA0ZWbMaQSD3yd@oMZeXeJMoolRVuNiM7JwraVY3cAr4eTPyZUJkPR_WqPSZ_VZ@oMZeXuJJqINWVuM2MrFx-hr8gL6KeK3NwUgficBXFDu5EafW@oMZeXbIbpN1WVrY3MbRy_NsMamKlLMKpg6E_MYla6sixNga8@LACnjk3meRLL1VmI4iTaKDgRGdRTpeYkqR5jdU5d3-0bh2887AU@LROyjnLfdyfb21KA7jzgs95Ch19cw_V4G94Sh9kKnHxWiTU")
 }
 
 ## 转换JD_BEAN_SIGN_STOP_NOTIFY或JD_BEAN_SIGN_NOTIFY_SIMPLE
