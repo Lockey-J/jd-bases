@@ -35,7 +35,7 @@ Scripts2URL=https://github.com/shylocks/Loon
 #  ScriptsURL=https://github.com/LXK9301/jd_scripts
 #  ShellURL=https://github.com/EvineDeng/jd-base
 #else
-  ScriptsURL=https://gitee.com/lxk0301/jd_scripts
+  ScriptsURL=git@gitee.com:lxk0301/jd_scripts.git
   ShellURL=https://git.rylearn.xyz/rylearn/jd-base
 #fi
 
