@@ -1,6 +1,6 @@
-## Version: v3.26.0
-## Date: 2021-02-24
-## Update Content: 删除过期环境变量。
+## Version: v3.27.0
+## Date: 2021-04-07
+## Update Content: 添加手机狂欢城、惊喜财富岛变量。
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
 ## 如需更新，请参考WIKI（https://github.com/EvineDeng/jd-base/wiki）中"如何更新配置文件"部分的操作说明，进行智能比对后修改。
@@ -363,6 +363,42 @@ ForOtherSgmh3=""
 ForOtherSgmh4=""
 ForOtherSgmh5=""
 ForOtherSgmh6=""
+
+################################## 定义手机狂欢城互助码（选填） ##################################
+## 具体填法及要求详见本文件最下方“互助码填法示例”
+MyJD8181=""
+MyJD8182=""
+MyJD8183=""
+MyJD8184=""
+MyJD8185=""
+MyJD8186=""
+MyJD818A=""
+MyJD818B=""
+
+ForOtherJD8181=""
+ForOtherJD8182=""
+ForOtherJD8183=""
+ForOtherJD8184=""
+ForOtherJD8185=""
+ForOtherJD8186=""
+
+################################## 定义京喜财富岛互助码（选填） ##################################
+## 具体填法及要求详见本文件最下方“互助码填法示例”
+MyJDCFD1=""
+MyJDCFD2=""
+MyJDCFD3=""
+MyJDCFD4=""
+MyJDCFD5=""
+MyJDCFD6=""
+MyJDCFDA=""
+MyJDCFDA=""
+
+ForOtherJDCFD1=""
+ForOtherJDCFD2=""
+ForOtherJDCFD3=""
+ForOtherJDCFD4=""
+ForOtherJDCFD5=""
+ForOtherJDCFD6=""
 
 ################################## 定义东东超市蓝币兑换数量（选填） ##################################
 ## 东东超市蓝币兑换，可用值包括：
