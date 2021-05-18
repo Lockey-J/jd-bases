@@ -39,6 +39,8 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     && ssh-keyscan gitee.com > /root/.ssh/known_hosts \
     && git clone -b ${JD_BASE_BRANCH} ${JD_BASE_URL} ${JD_DIR} \
     && cd ${JD_DIR}/panel \
+    && yarn install || yarn install --registry=https://registry.npm.taobao.org \
+    && npm install -g pm2 \
     && npm install \
     && git clone -b ${JD_SCRIPTS_BRANCH} ${JD_SCRIPTS_URL} ${JD_DIR}/scripts \
     && cd ${JD_DIR}/scripts \
