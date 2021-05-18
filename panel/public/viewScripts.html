@@ -4,13 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>自定义脚本 · 京东薅羊毛控制面板</title>
-    <script type="text/javascript" src="./js/jquery.min.js"></script>
-    <script type="text/javascript" src="./js/codemirror.min.js"></script>
-    <script type="text/javascript" src="./js/comment.js"></script>
-    <script type="text/javascript" src="./js/shell.js"></script>
-    <script type="text/javascript" src="./js/sublime.js"></script>
-    <script type="text/javascript" src="./js/sweetalert2.js"></script>
+    <title>查看脚本 · 京东薅羊毛控制面板</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/metismenu/dist/metisMenu.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/elektron/dist/elektron.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/onoffcanvas/dist/onoffcanvas.min.css">
     <script type="text/javascript" src="./js/prefixfree.min.js"></script>
     <script type="text/javascript" src="./js/script.js"></script>
     <link rel="stylesheet" href="./css/normalize.min.css">
@@ -24,81 +22,144 @@
 
 <body>
     <div class="container">
-        <div class="diffs">
-            <nav>
-                <ul>
-                    <li><a href="./home">首页</a></li>
-                    <li><a href="./diff">对比工具</a></li>
-                    <li><a href="./crontab">定时任务设定</a></li>
-                    <li><a href="./run">手动执行脚本</a></li>
-                    <li class="active"><a href="./diy">自定义脚本</a></li>
-                    <li><a href="./log">日志查询</a></li>
-                    <li><a href="./viewScripts">查看脚本</a></li>
-                    <li><a href="./changepwd">修改密码</a></li>
-                    <li><a href="./logout">退出</a></li>
-                    <li>
-                        <span style="float:right; font-size:0.7em;"><button
-                                onclick="toggleAnimation(this)">Start</button></span>
-                    </li>
-                </ul>
-            </nav>
-            <header>
-                <h1>在线编辑工具</h1>
-                <button id="save" title="保存">保存</button><button id="wrap" title="切换换行">切换换行</button><button title="使用帮助"
-                    onclick="javascript:window.open('https://gitee.com/SuperManito/JD-FreeFuck/wikis/Linux-Use-And-Update-Tutorial?sort_id=3629234#5-%E4%BD%BF%E7%94%A8-diy-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%84%9A%E6%9C%AC%E6%89%A9%E5%B1%95%E6%B4%BB%E5%8A%A8%E8%84%9A%E6%9C%AC%E6%95%B0%E9%87%8F')">Linux
-                    版本使用帮助</button><button title="使用帮助"
-                    onclick="javascript:window.open('https://gitee.com/SuperManito/JD-FreeFuck/wikis/Docker-Use-And-Update-Tutorial?sort_id=3629233#5-%E4%BD%BF%E7%94%A8-diy-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%84%9A%E6%9C%AC%E6%89%A9%E5%B1%95%E6%B4%BB%E5%8A%A8%E8%84%9A%E6%9C%AC%E6%95%B0%E9%87%8F')">Docker
-                    版本使用帮助</button>
-                <br />
-            </header>
-            <h4>自定义脚本&#12288;&#12288;<font size="2">温馨提示：此脚本的用途为收集并添加第三方作者编写的活动脚本，关于如何启用该功能详见配置文件中的《DIY脚本功能设置》模块。</font>
-            </h4>
-            <div class="wrapper">
-                <textarea id="code" name="code"></textarea>
+        <div class="elk-app">
+            <div class="elk-wrap diffs">
+                <div class="elk-header">
+                    <nav>
+                        <ul>
+                            <li><a href="./home">首页</a></li>
+                            <li><a href="./diff">对比工具</a></li>
+                            <li><a href="./crontab">定时任务设定</a></li>
+                            <li><a href="./run">手动执行脚本</a></li>
+                            <li><a href="./diy">自定义脚本</a></li>
+                            <li><a href="./log">日志查询</a></li>
+                            <li class="active"><a href="./viewScripts">查看脚本</a></li>
+                            <li><a href="./changepwd">修改密码</a></li>
+                            <li><a href="./logout">退出</a></li>
+                            <li>
+                                <span style="float:right; font-size:0.7em;"><button onclick="toggleAnimation(this)">Start</button></span>
+                            </li>
+                        </ul>
+                    </nav>
+                    <header>
+                        <a id="toggleIcon" class="onoffcanvas-toggler is-animated" href="#elk-side"
+                            data-toggle="onoffcanvas"></a>
+                        <h1>查看脚本</h1>
+                        <button id="wrap" title="切换换行">切换换行</button>
+                    </header>
+                </div>
+
+                <div class="elk-container">
+                    <aside class="elk-side bg-light left-list" id="elk-side">
+                        <div class="elk-side-content ">
+                            <div class="elk-side-nav">
+                                <ul class="nav flex-column" id="menu1">
+
+                                </ul>
+
+                            </div>
+                        </div>
+
+                    </aside>
+                    <div class="elk-main">
+                        <div class="wrapper">
+                            <textarea id="code" name="code">  你还没有选择脚本文件！</textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/onoffcanvas"></script>
+    <script src="https://cdn.jsdelivr.net/npm/elektron"></script>
+    <script src="https://cdn.jsdelivr.net/npm/metismenu"></script>
+    <script src="./js/codemirror.min.js"></script>
+    <script src="./js/javascript.js"></script>
     <script>
         $.ajaxSetup({
             cache: false
         });
 
+        var qrcode, userCookie;
         $(document).ready(function () {
             var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
                 lineNumbers: true,
-                lineWrapping: true,
+                lineWrapping: false,
                 styleActiveLine: true,
                 matchBrackets: true,
-                mode: 'shell',
-                theme: 'dracula',
-                keyMap: 'sublime'
-            });
-            $.get('./api/config/diy', function (data) {
-                editor.setValue(data);
+                readOnly: true,
+                mode: 'javascript',
+                theme: 'dracula'
             });
 
-            $('#save').click(function () {
-                var confContent = editor.getValue();
-                let timeStamp = (new Date()).getTime()
-                $.post('./api/save?t=' + timeStamp, {
-                    content: confContent,
-                    name: "diy.sh"
-                }, function (data) {
-                    let icon = (data.err == 0) ? "success" : "error"
-                    Swal.fire({
-                        title: data.title,
-                        text: data.msg,
-                        icon: icon
-                    }).then((result) => {
-                        window.location.reload(true);
-                    })
-                });
+            $.get('./api/scripts', function (data) {
+                var dirs = data.dirs;
+                var navHtml = "";
+                for (let index in dirs) {
+                    var dirName = dirs[index].dirName;
+                    // 文件在scripts/目录时
+                    if (dirName === '@') {
+                        var row = `<li class="nav-item">`;
+                        for (let filesKey in dirs[index].files) {
+                            var fileName = dirs[index].files[filesKey];
+                            row +=
+                                `<a class="nav-link" href="javascript:viewScript('${dirName}', '${fileName}');">${fileName}</a>`
+                        }
+                        row += `</li>`;
+                    } else {
+                        var row = `<li class="nav-item">
+                                <a class="nav-link text-dark has-arrow" href="#">${dirName}</a>
+                                <ul class="nav flex-column pl-1">
+                                    <li class="nav-item">`;
+                        for (let filesKey in dirs[index].files) {
+                            var fileName = dirs[index].files[filesKey];
+                            row +=
+                                `<a class="nav-link" href="javascript:viewScript('${dirName}', '${fileName}');">${fileName}</a>`
+                        }
+                        row += `</li>
+                                    </ul>
+                                </li>`;
+                    }
+
+                    navHtml += row;
+                }
+                $('#menu1').html(navHtml);
+                $('#menu1').metisMenu();
             });
+
+            window.viewScript = function viewScript(dir, file) {
+                if (window.innerWidth < 993) {
+                    dispatch(document.getElementById('toggleIcon'), 'click');
+                }
+
+                $.get(`./api/scripts/${dir}/${file}`, function (data) {
+                    editor.setValue(data);
+                });
+            }
 
             $('#wrap').click(function () {
                 var lineWrapping = editor.getOption('lineWrapping');
                 editor.setOption('lineWrapping', !lineWrapping);
             });
+
+
+            //自动触发事件
+            function dispatch(ele, type) {
+                try {
+                    if (ele.dispatchEvent) { //标准浏览器
+
+                        var evt = document.createEvent('Event');
+                        evt.initEvent(type, true, true);
+                        ele.dispatchEvent(evt);
+                    } else {
+                        ele.fireEvent('on' + type);
+                    }
+                } catch (e) {};
+
+            }
         });
     </script>
 
