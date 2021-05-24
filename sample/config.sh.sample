@@ -418,6 +418,24 @@ ForOtherJdhealth4=""
 ForOtherJdhealth5=""
 ForOtherJdhealth6=""
 
+################################## 13. 定义东东健康社区互助（选填） ##################################
+## 具体填法及要求详见本文件最下方“互助码填法示例”
+MyJdcity1=""
+MyJdcity2=""
+MyJdcity3=""
+MyJdcity4=""
+MyJdcity5=""
+MyJdcity6=""
+MyJdcityA=""
+MyJdcityB=""
+
+ForOtherJdcity1=""
+ForOtherJdcity2=""
+ForOtherJdcity3=""
+ForOtherJdcity4=""
+ForOtherJdcity5=""
+ForOtherJdcity6=""
+
 ################################## 定义东东超市蓝币兑换数量（选填） ##################################
 ## 东东超市蓝币兑换，可用值包括：
 ## 一、0：表示不兑换京豆，这也是js脚本的默认值
