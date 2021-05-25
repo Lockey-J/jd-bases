@@ -1,23 +1,28 @@
 #!/usr/bin/env bash
 
-## Modified： 2021-02-01
-## Version： v3.8.2
+## Modified： 2021-05-25
+## Version： v3.8.3
 
 ## 路径
-ShellDir=${JD_DIR:-$(cd $(dirname $0); pwd)}
+ShellDir=${JD_DIR:-$(
+  cd $(dirname $0)
+  pwd
+)}
 [ ${JD_DIR} ] && HelpJd=jd || HelpJd=jd.sh
 ScriptsDir=${ShellDir}/scripts
 ConfigDir=${ShellDir}/config
 FileConf=${ConfigDir}/config.sh
 FileConfSample=${ShellDir}/sample/config.sh.sample
 LogDir=${ShellDir}/log
-ListScripts=($(cd ${ScriptsDir}; ls *.js | grep -E "j[drx]_"))
+ListScripts=($(
+  cd ${ScriptsDir}
+  ls *.js | grep -E "j[drx]_"
+))
 ListCron=${ConfigDir}/crontab.list
 
 ## 导入config.sh
-function Import_Conf {
-  if [ -f ${FileConf} ]
-  then
+function Import_Conf() {
+  if [ -f ${FileConf} ]; then
     . ${FileConf}
     if [ -z "${Cookie1}" ]; then
       echo -e "请先在config.sh中配置好Cookie...\n"
@@ -30,207 +35,193 @@ function Import_Conf {
 }
 
 ## 更新crontab
-function Detect_Cron {
+function Detect_Cron() {
   if [[ $(cat ${ListCron}) != $(crontab -l) ]]; then
     crontab ${ListCron}
   fi
 }
- 
+
 ## 用户数量UserSum
-function Count_UserSum {
-  for ((i=1; i<=1000; i++)); do
+function Count_UserSum() {
+  for ((i = 1; i <= 30; i++)); do
     Tmp=Cookie$i
     CookieTmp=${!Tmp}
     [[ ${CookieTmp} ]] && UserSum=$i || break
   done
+
+  for ((d = 31; d <= 1000; d++)); do
+    Del=Cookie$d
+    sed -i "/${!Del}/d" ${FileConf} || break
+  done
 }
 
 ## 组合Cookie和互助码子程序
-function Combin_Sub {
+function Combin_Sub() {
   CombinAll=""
-  for ((i=1; i<=${UserSum}; i++)); do
-    for num in ${TempBlockCookie}; do
-      if [[ $i -eq $num ]]; then
-        continue 2
-      fi
+  if [[ ${AutoHelpOther} == true ]] && [[ $1 == ForOther* ]]; then
+
+    ForOtherAll=""
+    MyName=$(echo $1 | perl -pe "s|ForOther|My|")
+
+    for ((m = 1; m <= ${UserSum}; m++)); do
+      TmpA=${MyName}$m
+      TmpB=${!TmpA}
+      ForOtherAll="${ForOtherAll}@${TmpB}"
     done
-    Tmp1=$1$i
-    Tmp2=${!Tmp1}
-    case $# in
-      1)
-        CombinAll="${CombinAll}&${Tmp2}"
-        ;;
-      2)
-        CombinAll="${CombinAll}&${Tmp2}@$2"
-        ;;
-      3)
-        if [ $(($i % 2)) -eq 1 ]; then
-          CombinAll="${CombinAll}&${Tmp2}@$2"
-        else
-          CombinAll="${CombinAll}&${Tmp2}@$3"
-        fi
-        ;;
-      4)
-        case $(($i % 3)) in
-          1)
-            CombinAll="${CombinAll}&${Tmp2}@$2"
-            ;;
-          2)
-            CombinAll="${CombinAll}&${Tmp2}@$3"
-            ;;
-          0)
-            CombinAll="${CombinAll}&${Tmp2}@$4"
-            ;;
-        esac
-        ;;
-    esac
-  done
-  echo ${CombinAll} | perl -pe "{s|^&||; s|^@+||; s|&@|&|g; s|@+|@|g}"
+
+    for ((n = 1; n <= ${UserSum}; n++)); do
+      for num in ${TempBlockCookie}; do
+        [[ $n -eq $num ]] && continue 2
+      done
+      CombinAll="${CombinAll}&${ForOtherAll}"
+    done
+
+  else
+    for ((i = 1; i <= ${UserSum}; i++)); do
+      for num in ${TempBlockCookie}; do
+        [[ $i -eq $num ]] && continue 2
+      done
+      Tmp1=$1$i
+      Tmp2=${!Tmp1}
+      CombinAll="${CombinAll}&${Tmp2}"
+    done
+  fi
+
+  echo ${CombinAll} | perl -pe "{s|^&||; s|^@+||; s|&@|&|g; s|@+&|&|g; s|@+|@|g; s|@+$||}"
 }
 
-## 组合Cookie、Token与互助码，用户自己的放在前面，我的放在后面
-function Combin_All {
+## 组合Cookie、Token与互助码
+function Combin_All() {
   export JD_COOKIE=$(Combin_Sub Cookie)
-  export FRUITSHARECODES=$(Combin_Sub ForOtherFruit "1c647df8b860451c9b2feeb5370e2b79@f7dd622accb248dd8ad49c17c1247bec@80136eb7b86a4a5dbb6f7532e8b93756" "6d402dcfae1043fba7b519e0d6579a6f@5efc7fdbb8e0436f8694c4c393359576@6dc9461f662d490991a31b798f624128" "e2fd1311229146cc9507528d0b054da8@30f29addd75d44e88fb452bbfe9f2110@1d02fc9e0e574b4fa928e84cb1c5e70b")
+  ## 东东农场(jd_fruit.js)
+  export FRUITSHARECODES=$(Combin_Sub ForOtherFruit)
+  ## 东东萌宠(jd_pet.js)
   export PETSHARECODES=$(Combin_Sub ForOtherPet)
-  export PLANT_BEAN_SHARECODES=$(Combin_Sub ForOtherBean "e7lhibzb3zek3pin4skndq2ekau4vqumng3rkky@ehv4vxhwtcvlokwwain5ycjx2i@7oivz2mjbmnx4mpe5q5ihc5e6i4thq2pyzjwsza" "mze7pstbax4l7dmo4vq6wz7vgu@rsuben7ys7sfbu5eub7knbibke@olmijoxgmjutzexyge246xwmaxy43t3jsqc74zy" "olmijoxgmjutybihibx67mwivxbag4rjviz3cji@m6mhupvfogvf5kuwe3c5h5fptd2syad6cznse4i@4npkonnsy7xi3mi4ngwtraxgzwabeyj7oky5rly")
-  export DREAM_FACTORY_SHARE_CODES=$(Combin_Sub ForOtherDreamFactory "lZYzQ2dMxPJvgP08QA425w==@j1kBDPwniOIQkIu_MOGo7A==@9Kc14wUxsYWFfmgoE4I3Dg==" "CNt5BX1eD8Tw-Wq045YSWg==@phEELHGm3o7VKPIyiBO3Vw==@z-tDlNURI5HvM4MtehtjDA==@dzM8y-1G-D1pt6If32xQ0A==" "XCO7kpq00mMmYwOag2O_CQ==@48wAKDXkEE-RNwNs7W48MlW77AibIyB8QyD22ydJ4NI=@fzeFwj_aACkm-VgdmLqOhw==")
+  ## 种豆得豆(jd_plantBean.js)
+  export PLANT_BEAN_SHARECODES=$(Combin_Sub ForOtherBean)
+  ## 东东工厂(jd_jdfactory.js)
   export DDFACTORY_SHARECODES=$(Combin_Sub ForOtherJdFactory)
+  ## 京喜工厂(jd_dreamFactory.js)
+  export DREAM_FACTORY_SHARE_CODES=$(Combin_Sub ForOtherDreamFactory)
+  ## 京东赚赚(jd_jdzz.js)
   export JDZZ_SHARECODES=$(Combin_Sub ForOtherJdzz)
+  ## 疯狂的Joy(jd_crazy_joy.js)
   export JDJOY_SHARECODES=$(Combin_Sub ForOtherJoy)
+  ## 口袋书店(jd_bookshop.js)
+  export BOOKSHOP_SHARECODES=$(Combin_Sub ForOtherBookShop)
+  ## 签到领现金(jd_cash.js)
+  export JD_CASH_SHARECODES=$(Combin_Sub ForOtherCash)
+  ## 京喜农场(jd_jxnc.js)
   export JXNC_SHARECODES=$(Combin_Sub ForOtherJxnc)
-  export JXNCTOKENS=$(Combin_Sub TokenJxnc)
-  export BOOKSHOP_SHARECODES=$(Combin_Sub ForOtherBookShop "19474863c786486fa5d108e06ba4f51c@03b5475d429b4aa5ba16a18d541739f8@c3b10451746446ba984e74242f5e58f6")
-  export JD_CASH_SHARECODES=$(Combin_Sub ForOtherCash "eU9YaLjgb_kl9G2HnSIS3w@XkJ1LrPwZ_Uv@eU9YN7DHBbx4mS2olRRp" "Vl1uMrmyZvs@eU9YarrjM_53p27dyXQa3g@9Jq0uXglsVCqKd5kEv-D@9YmhuUccv2W6J9VsHue5AQqJ" "eU9YarjhYqonpDrTzXcR1Q@eU9Ya77gZK5z-TqHn3UWhQ@eU9Yaui2ZP4gpG-Gz3EThA@eU9YaeizbvQnpG_SznIS0w")
-  export JDNIAN_SHARECODES=$(Combin_Sub ForOtherNian "cgxZdTXtIO6I4wvKDQb7uYik24iNYjg8COG-Pv0UKkAGBeHETRQIhsSu-Qg@cgxZUjjAZuWY6wfAREnKqB4EagOGP96M54KS@cgxZdTXtf-aviU6XYEbUsRid409-iXebX2MBLykLK-iubf56d8X71Uw")
-  export JDNIANPK_SHARECODES=$(Combin_Sub ForOtherNianPk "IgNWdiLGaPaAvmGSVHDKr5QIwk4ezq-QdYqDFvwaTl0oR9Fmv3b7nfD__ffXww") 
-  export JDSXSY_SHARECODES=$(Combin_Sub ForOtherImmortal "23xIs4YwE5Z7HdgnUcxRT-XlSoXoJLmBE@56xIs4YwE5Z7G8-z3rXfTNliqVYXz9M6JRXG-yH8Vx4dLQzrizP4dLTPyH1_nW4EszjVqzvYCF7YE6CoNmvdjLBMjQ_@43xIs4YwE5Z7DsWOzDSP_d8Rjea5vaaX61gfhVs6SfEGnwcZB9wEJX2m2nHKOaC6Zjyw" "34xIs4YwE5Z7HhWvhuV0OSNsWxu4l5KyQo6VAKcMVw0BbhzvPXXg@43xIs4YwE5Z7DsWOzDSPOBTEaue3ty6EyxKwJhHK0IpkCccZB9wBAAi2jzGjO7Zk0NBQ@46xIs4YwE5Z7G9J6kzXVQUmik-F9Rd23gLTdzlTswGj7g5F1Q_VaEE-_9VqfmrrK7GkGwYKFc" "40xIs4YwE5Z7G9Wz1fXbiNaj7BIJ_cEtkCA14e3w3wC_EWRE9DEWJLOHy4bS9CN@43xIs4YwE5Z7DsWOzDSPPhRRrG8MhYR4xhrORXRDTIPqsocZB9wBIC2jyBAueqKUNS5w@28xIs4YwE5Z7HdgnUcxRT_3luPSlp4IXoJLmBFTjzk")
-  export JDSGMH_SHARECODES=$(Combin_Sub ForOtherSgmh "T0225KkcREpL_FHUJRmmwqYLfQCjVWmIaW5kRrbA@T012w6QxAkFb9F3eCjVWmIaW5kRrbA@T0205KkcG0JslhSJSFmJypBwCjVWmIaW5kRrbA")
-  #export JSMOBILEFESTIVAL_SHARECODES=$(Combin_Sub ForOtherJdMobileFestival)
-  export JD818_SHARECODES=$(Combin_Sub ForOtherJd818)
+  ## 闪购盲盒(jd_sgmh.js)
+  export JDSGMH_SHARECODES=$(Combin_Sub ForOtherSgmh)
+  ## 京喜财富岛(jd_cfd.js)
   export JDCFD_SHARECODES=$(Combin_Sub ForOtherJDCFD)
-  #export JDNY_SHARECODES=$(Combin_Sub ForOtherNY "oMZeX7IaqY5UBuFjYeFx9vga96pSzXeRIHC7dpM7jMULi7RF@h8tzGbkKoYJeT659N_w8s41cY9FUwfUtbPJnHKI@oMZeALo9w8sJa6FMadcKsz9KbZiMYZDfW-ntSLZGE4rW2bc" "oMZeXLQaotkCC7ZjY7Z1rFHCHnz7lx2ZfaUA0ZWbMaQSD3yd@oMZeXeJMoolRVuNiM7JwraVY3cAr4eTPyZUJkPR_WqPSZ_VZ@oMZeXuJJqINWVuM2MrFx-hr8gL6KeK3NwUgficBXFDu5EafW@oMZeXbIbpN1WVrY3MbRy_NsMamKlLMKpg6E_MYla6sixNga8@LACnjk3meRLL1VmI4iTaKDgRGdRTpeYkqR5jdU5d3-0bh2887AU@LROyjnLfdyfb21KA7jzgs95Ch19cw_V4G94Sh9kKnHxWiTU")
+  ## 环球挑战赛(jd_global.js)
+  export JDGLOBAL_SHARECODES=$(Combin_Sub ForOtherGlobal)
+  ## 东东健康（jd_health.js）
   export JDHEALTH_SHARECODES=$(Combin_Sub ForOtherJdhealth)
+  ## 城城领现金（jd_city.js）
   export CITY_SHARECODES=$(Combin_Sub ForOtherJdcity)
 }
 
 ## 转换JD_BEAN_SIGN_STOP_NOTIFY或JD_BEAN_SIGN_NOTIFY_SIMPLE
-function Trans_JD_BEAN_SIGN_NOTIFY {
+function Trans_JD_BEAN_SIGN_NOTIFY() {
   case ${NotifyBeanSign} in
-    0)
-      export JD_BEAN_SIGN_STOP_NOTIFY="true"
-      ;;
-    1)
-      export JD_BEAN_SIGN_NOTIFY_SIMPLE="true"
-      ;;
+  0)
+    export JD_BEAN_SIGN_STOP_NOTIFY="true"
+    ;;
+  1)
+    export JD_BEAN_SIGN_NOTIFY_SIMPLE="true"
+    ;;
   esac
 }
 
 ## 转换UN_SUBSCRIBES
-function Trans_UN_SUBSCRIBES {
-  export UN_SUBSCRIBES="${goodPageSize}\n${shopPageSize}\n${jdUnsubscribeStopGoods}\n${jdUnsubscribeStopShop}"
+function Trans_UN_SUBSCRIBES() {
+  export UN_SUBSCRIBES="${goodPageSize}&${shopPageSize}&${jdUnsubscribeStopGoods}&${jdUnsubscribeStopShop}"
 }
 
 ## 申明全部变量
-function Set_Env {
+function Set_Env() {
   Count_UserSum
   Combin_All
   Trans_JD_BEAN_SIGN_NOTIFY
   Trans_UN_SUBSCRIBES
 }
 
-## 随机延迟子程序
-function Random_DelaySub {
-  CurDelay=$((${RANDOM} % ${RandomDelay} + 1))
-  echo -e "\n命令未添加 \"now\"，随机延迟 ${CurDelay} 秒后再执行任务，如需立即终止，请按 CTRL+C...\n"
-  sleep ${CurDelay}
-}
-
-## 随机延迟判断
-function Random_Delay {
-  if [ -n "${RandomDelay}" ] && [ ${RandomDelay} -gt 0 ]; then
-    CurMin=$(date "+%M")
-    if [ ${CurMin} -gt 2 ] && [ ${CurMin} -lt 30 ]; then
-      Random_DelaySub
-    elif [ ${CurMin} -gt 31 ] && [ ${CurMin} -lt 59 ]; then
-      Random_DelaySub
+## 随机延迟
+function Random_Delay() {
+  if [[ -n ${RandomDelay} ]] && [[ ${RandomDelay} -gt 0 ]]; then
+    CurMin=$(date "+%-M")
+    if [[ ${CurMin} -gt 2 && ${CurMin} -lt 30 ]] || [[ ${CurMin} -gt 31 && ${CurMin} -lt 59 ]]; then
+      CurDelay=$((${RANDOM} % ${RandomDelay} + 1))
+      echo -e "\n命令未添加 \"now\"，随机延迟 ${CurDelay} 秒后再执行任务，如需立即终止，请按 CTRL+C...\n"
+      sleep ${CurDelay}
     fi
   fi
 }
 
 ## 使用说明
-function Help {
+function Help() {
   echo -e "本脚本的用法为："
   echo -e "1. bash ${HelpJd} xxx      # 如果设置了随机延迟并且当时时间不在0-2、30-31、59分内，将随机延迟一定秒数"
   echo -e "2. bash ${HelpJd} xxx now  # 无论是否设置了随机延迟，均立即运行"
   echo -e "3. bash ${HelpJd} hangup   # 重启挂机程序"
   echo -e "4. bash ${HelpJd} resetpwd # 重置控制面板用户名和密码"
-  echo -e "\n针对用法1、用法2中的\"xxx\"，无需输入后缀\".js\"，另外，如果前缀是\"jd_\"的话前缀也可以省略。"
+  echo -e "\n针对用法1、用法2中的\"xxx\"，可以不输入后缀\".js\"，另外，如果前缀是\"jd_\"的话前缀也可以省略。"
   echo -e "当前有以下脚本可以运行（仅列出以jd_、jr_、jx_开头的脚本）："
   cd ${ScriptsDir}
-  for ((i=0; i<${#ListScripts[*]}; i++)); do
+  for ((i = 0; i < ${#ListScripts[*]}; i++)); do
     Name=$(grep "new Env" ${ListScripts[i]} | awk -F "'|\"" '{print $2}')
     echo -e "$(($i + 1)).${Name}：${ListScripts[i]}"
   done
 }
 
 ## nohup
-function Run_Nohup {
-  for js in ${HangUpJs}
-  do
-    if [[ $(ps -ef | grep "${js}" | grep -v "grep") != "" ]]; then
-      ps -ef | grep "${js}" | grep -v "grep" | awk '{print $2}' | xargs kill -9
-    fi
-  done
-
-  for js in ${HangUpJs}
-  do
-    [ ! -d ${LogDir}/${js} ] && mkdir -p ${LogDir}/${js}
-    LogTime=$(date "+%Y-%m-%d-%H-%M-%S")
-    LogFile="${LogDir}/${js}/${LogTime}.log"
-    nohup node ${js}.js > ${LogFile} &
-  done
-}
-
-## pm2
-function Run_Pm2 {
-  pm2 flush
-  for js in ${HangUpJs}
-  do
-    pm2 restart ${js}.js || pm2 start ${js}.js
-  done
+function Run_Nohup() {
+  if [[ $(ps -ef | grep "${js}" | grep -v "grep") != "" ]]; then
+    ps -ef | grep "${js}" | grep -v "grep" | awk '{print $2}' | xargs kill -9
+  fi
+  [ ! -d ${LogDir}/${js} ] && mkdir -p ${LogDir}/${js}
+  LogTime=$(date "+%Y-%m-%d-%H-%M-%S")
+  LogFile="${LogDir}/${js}/${LogTime}.log"
+  nohup node ${js}.js >${LogFile} &
 }
 
 ## 运行挂机脚本
-function Run_HangUp {
-  Import_Conf && Detect_Cron && Set_Env
+function Run_HangUp() {
   HangUpJs="jd_crazy_joy_coin"
   cd ${ScriptsDir}
-  if type pm2 >/dev/null 2>&1; then
-    Run_Pm2 2>/dev/null
-  else
-    Run_Nohup >/dev/null 2>&1
-  fi
+  for js in ${HangUpJs}; do
+    Import_Conf ${js} && Set_Env
+    if type pm2 >/dev/null 2>&1; then
+      pm2 stop ${js}.js 2>/dev/null
+      pm2 flush
+      pm2 start -a ${js}.js --watch "${ScriptsDir}/${js}.js" --name="${js}"
+    else
+      Run_Nohup >/dev/null 2>&1
+    fi
+  done
 }
 
 ## 重置密码
-function Reset_Pwd {
+function Reset_Pwd() {
   cp -f ${ShellDir}/sample/auth.json ${ConfigDir}/auth.json
-  echo -e "控制面板重置成功，用户名：admin，密码：adminadmin\n"
+  echo -e "控制面板重置成功，用户名：useradmin，密码：supermanito\n"
 }
 
 ## 运行京东脚本
-function Run_Normal {
-  Import_Conf && Detect_Cron && Set_Env
-  
+function Run_Normal() {
+  Import_Conf $1 && Detect_Cron && Set_Env
+
   FileNameTmp1=$(echo $1 | perl -pe "s|\.js||")
   FileNameTmp2=$(echo $1 | perl -pe "{s|jd_||; s|\.js||; s|^|jd_|}")
   SeekDir="${ScriptsDir} ${ScriptsDir}/backUp ${ConfigDir}"
   FileName=""
   WhichDir=""
 
-  for dir in ${SeekDir}
-  do
+  for dir in ${SeekDir}; do
     if [ -f ${dir}/${FileNameTmp1}.js ]; then
       FileName=${FileNameTmp1}
       WhichDir=${dir}
@@ -241,9 +232,8 @@ function Run_Normal {
       break
     fi
   done
-  
-  if [ -n "${FileName}" ] && [ -n "${WhichDir}" ]
-  then
+
+  if [ -n "${FileName}" ] && [ -n "${WhichDir}" ]; then
     [ $# -eq 1 ] && Random_Delay
     LogTime=$(date "+%Y-%m-%d-%H-%M-%S")
     LogFile="${LogDir}/${FileName}/${LogTime}.log"
@@ -258,29 +248,29 @@ function Run_Normal {
 
 ## 命令检测
 case $# in
-  0)
-    echo
+0)
+  echo
+  Help
+  ;;
+1)
+  if [[ $1 == hangup ]]; then
+    Run_HangUp
+  elif [[ $1 == resetpwd ]]; then
+    Reset_Pwd
+  else
+    Run_Normal $1
+  fi
+  ;;
+2)
+  if [[ $2 == now ]]; then
+    Run_Normal $1 $2
+  else
+    echo -e "\n命令输入错误...\n"
     Help
-    ;;
-  1)
-    if [[ $1 == hangup ]]; then
-      Run_HangUp
-    elif [[ $1 == resetpwd ]]; then
-      Reset_Pwd
-    else
-      Run_Normal $1
-    fi
-    ;;
-  2)
-    if [[ $2 == now ]]; then
-      Run_Normal $1 $2
-    else
-      echo -e "\n命令输入错误...\n"
-      Help
-    fi
-    ;;
-  *)
-    echo -e "\n命令过多...\n"
-    Help
-    ;;
+  fi
+  ;;
+*)
+  echo -e "\n命令过多...\n"
+  Help
+  ;;
 esac
