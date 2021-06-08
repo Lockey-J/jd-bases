@@ -123,6 +123,8 @@ function Combin_All() {
   export JDHEALTH_SHARECODES=$(Combin_Sub ForOtherJdhealth)
   ## 城城领现金（jd_city.js）
   export CITY_SHARECODES=$(Combin_Sub ForOtherJdcity)
+  ##惊喜农场token
+  export JXNCTOKENS=$(Combin_Sub TokenJxnc)
 }
 
 ## 转换JD_BEAN_SIGN_STOP_NOTIFY或JD_BEAN_SIGN_NOTIFY_SIMPLE
