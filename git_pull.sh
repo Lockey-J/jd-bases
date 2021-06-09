@@ -36,7 +36,7 @@ Scripts2URL=https://github.com/shylocks/Loon
 #  ShellURL=https://github.com/EvineDeng/jd-base
 #else
   ScriptsURL=https://git.rylearn.xyz/rylearn/jd_scripts_bak.git
-  ShellURL=https://git.rylearn.xyz/rylearn/jd-base
+  ShellURL=https://git.rylearn.xyz/rylearn/jd-base.git
 #fi
 
 ## 更新shell脚本
