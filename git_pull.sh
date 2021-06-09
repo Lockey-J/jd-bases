@@ -35,7 +35,7 @@ Scripts2URL=https://github.com/shylocks/Loon
 #  ScriptsURL=https://github.com/LXK9301/jd_scripts
 #  ShellURL=https://github.com/EvineDeng/jd-base
 #else
-  ScriptsURL=git@gitee.com:lxk0301/jd_scripts.git
+  ScriptsURL=https://git.rylearn.xyz/rylearn/jd_scripts_bak.git
   ShellURL=https://git.rylearn.xyz/rylearn/jd-base
 #fi
 
@@ -58,7 +58,7 @@ function Update_Cron {
 
 ## 克隆scripts
 function Git_CloneScripts {
-  echo -e "克隆LXK9301脚本，原地址：${ScriptsURL}\n"
+  echo -e "克隆rystudy脚本，原地址：${ScriptsURL}\n"
   git clone -b master ${ScriptsURL} ${ScriptsDir}
   ExitStatusScripts=$?
   echo
@@ -66,7 +66,7 @@ function Git_CloneScripts {
 
 ## 更新scripts
 function Git_PullScripts {
-  echo -e "更新LXK9301脚本，原地址：${ScriptsURL}\n"
+  echo -e "更新rystudy脚本，原地址：${ScriptsURL}\n"
   cd ${ScriptsDir}
   git fetch --all
   ExitStatusScripts=$?
