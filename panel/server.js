@@ -402,7 +402,7 @@ app.get('/cookie', function (request, response) {
                     let ucookie = getCookie(cookie);
                     response.send({
                         err: 0,
-                        cookie: cookie
+                        cookie: ucookie
                     });
                 } else {
                     response.send({
