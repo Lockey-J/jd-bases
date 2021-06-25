@@ -54,7 +54,7 @@ function praseSetCookies(response) {
 }
 
 function getCookie(response) {
-    console.log(response);
+    console.log(JSON.stringify(response));
     var TrackerID = response.headers['set-cookie'][0]
     TrackerID = TrackerID.substring(TrackerID.indexOf("=") + 1, TrackerID.indexOf(";"))
     var pt_key = response.headers['set-cookie'][1]
