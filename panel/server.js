@@ -44,13 +44,16 @@ var s_token, cookies, guid, lsid, lstoken, okl_token, token, userCookie = ""
 
 function praseSetCookies(response) {
     s_token = response.body.s_token
-    guid = response.headers['set-cookie'][0]
-    guid = guid.substring(guid.indexOf("=") + 1, guid.indexOf(";"))
-    lsid = response.headers['set-cookie'][2]
-    lsid = lsid.substring(lsid.indexOf("=") + 1, lsid.indexOf(";"))
-    lstoken = response.headers['set-cookie'][3]
-    lstoken = lstoken.substring(lstoken.indexOf("=") + 1, lstoken.indexOf(";"))
-    cookies = "guid=" + guid + "; lang=chs; lsid=" + lsid + "; lstoken=" + lstoken + "; "
+    let headers =response.headers;
+    let totalitem=headers['set-cookie'].length
+    for(let i =0;i<totalitem;i++){
+      let item=headers['set-cookie'][i];
+      let tmp=item.substring(item.indexOf("=") + 1, item.indexOf(";"))
+      if(tmp){
+        mcookie=item.substring(0,item.indexOf("=")+1)+tmp+";";
+        cookies+=mcookie;
+      }
+    }
 }
 
 function getCookie(response) {
@@ -87,18 +90,18 @@ async function step1() {
         okl_token,
         token = ""
         let timeStamp = (new Date()).getTime()
-        let url = 'https://plogin.m.jd.com/cgi-bin/mm/new_login_entrance?lang=chs&appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport'
-        const response = await got(url, {
+        $.loginUrl = 'https://plogin.m.jd.com/cgi-bin/mm/new_login_entrance?lang=chs&appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport'
+        const response = await got($.loginUrl, {
             responseType: 'json',
             headers: {
                 'Connection': 'Keep-Alive',
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json, text/plain, */*',
                 'Accept-Language': 'zh-cn',
-                'Referer': 'https://plogin.m.jd.com/login/login?appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
+                'Referer': $.loginUrl,
+                'User-Agent': "jdapp;android;10.0.5;11;0393465333165363-5333430323261366;network/wifi;model/M2102K1C;osVer/30;appBuild/88681;partner/lc001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; M2102K1C Build/RKQ1.201112.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045534 Mobile Safari/537.36",
                 'Host': 'plogin.m.jd.com'
-            }
+              }
         });
 
         praseSetCookies(response)
@@ -121,7 +124,7 @@ async function step2() {
             json: {
                 'lang': 'chs',
                 'appid': 300,
-                'returnurl': 'https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action',
+                'returnurl': $.loginUrl,
                 'source': 'wq_passport'
             },
             headers: {
@@ -129,8 +132,8 @@ async function step2() {
                 'Content-Type': 'application/x-www-form-urlencoded; Charset=UTF-8',
                 'Accept': 'application/json, text/plain, */*',
                 'Cookie': cookies,
-                'Referer': 'https://plogin.m.jd.com/login/login?appid=300&returnurl=https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
+                'Referer': $.loginUrl,
+                'User-Agent': 'jdapp;android;10.0.5;11;0393465333165363-5333430323261366;network/wifi;model/M2102K1C;osVer/30;appBuild/88681;partner/lc001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; M2102K1C Build/RKQ1.201112.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045534 Mobile Safari/537.36',
                 'Host': 'plogin.m.jd.com',
             }
         });
@@ -163,12 +166,12 @@ async function checkLogin() {
                 source: 'wq_passport'
             },
             headers: {
-                'Referer': 'https://plogin.m.jd.com/login/login?appid=300&returnurl=https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport',
+                'Referer': $.loginUrl,
                 'Cookie': cookies,
                 'Connection': 'Keep-Alive',
                 'Content-Type': 'application/x-www-form-urlencoded; Charset=UTF-8',
                 'Accept': 'application/json, text/plain, */*',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
+                'User-Agent': 'jdapp;android;10.0.5;11;0393465333165363-5333430323261366;network/wifi;model/M2102K1C;osVer/30;appBuild/88681;partner/lc001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; M2102K1C Build/RKQ1.201112.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045534 Mobile Safari/537.36',
             }
         });
 
