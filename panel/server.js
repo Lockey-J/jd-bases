@@ -370,7 +370,7 @@ app.get('/qrcode', function (request, response) {
                 if (qrurl != 0) {
                     response.send({
                         err: 0,
-                        msg:cookies,
+                        msg:"123",
                         qrcode: qrurl
                     });
                 } else {
