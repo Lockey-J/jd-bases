@@ -1,3 +1,4 @@
+
 /*
  * @Author: Jerrykuku https://github.com/jerrykuku
  * @Date: 2021-1-8
@@ -7,15 +8,11 @@
 
 var express = require('express');
 var session = require('express-session');
-var compression = require('compression');
 var bodyParser = require('body-parser');
 var got = require('got');
 var path = require('path');
 var fs = require('fs');
-var {
-    execSync,
-    exec
-} = require('child_process');
+var { execSync, exec } = require('child_process');
 
 var rootPath = path.resolve(__dirname, '..')
 // config.sh 文件所在目录
@@ -28,6 +25,8 @@ var crontabFile = path.join(rootPath, 'config/crontab.list');
 var confBakDir = path.join(rootPath, 'config/bak/');
 // auth.json 文件目录
 var authConfigFile = path.join(rootPath, 'config/auth.json');
+// Share Code 文件目录
+var shareCodeDir = path.join(rootPath, 'log/jd_get_share_code/');
 // diy.sh 文件目录
 var diyFile = path.join(rootPath, 'config/diy.sh');
 // 日志目录
@@ -38,26 +37,22 @@ var ScriptsPath = path.join(rootPath, 'scripts/');
 var authError = "错误的用户名密码，请重试";
 var loginFaild = "请先登录!";
 
-var configString = "config sample crontab diy";
+var configString = "config sample crontab shareCode diy";
 
 var s_token, cookies, guid, lsid, lstoken, okl_token, token, userCookie = ""
-var JD_UA="jdapp;android;10.0.5;11;0393465333165363-5333430323261366;network/wifi;model/M2102K1C;osVer/30;appBuild/88681;partner/lc001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; M2102K1C Build/RKQ1.201112.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045534 Mobile Safari/537.36";
+
 function praseSetCookies(response) {
     s_token = response.body.s_token
-    let headers =response.headers;
-    let totalitem=headers['set-cookie'].length
-    for(let i =0;i<totalitem;i++){
-      let item=headers['set-cookie'][i];
-      let tmp=item.substring(item.indexOf("=") + 1, item.indexOf(";"))
-      if(tmp){
-        mcookie=item.substring(0,item.indexOf("=")+1)+tmp+";";
-        cookies+=mcookie;
-      }
-    }
+    guid = response.headers['set-cookie'][0]
+    guid = guid.substring(guid.indexOf("=") + 1, guid.indexOf(";"))
+    lsid = response.headers['set-cookie'][2]
+    lsid = lsid.substring(lsid.indexOf("=") + 1, lsid.indexOf(";"))
+    lstoken = response.headers['set-cookie'][3]
+    lstoken = lstoken.substring(lstoken.indexOf("=") + 1, lstoken.indexOf(";"))
+    cookies = "guid=" + guid + "; lang=chs; lsid=" + lsid + "; lstoken=" + lstoken + "; "
 }
 
 function getCookie(response) {
-    console.log(JSON.stringify(response));
     var TrackerID = response.headers['set-cookie'][0]
     TrackerID = TrackerID.substring(TrackerID.indexOf("=") + 1, TrackerID.indexOf(";"))
     var pt_key = response.headers['set-cookie'][1]
@@ -92,15 +87,14 @@ async function step1() {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json, text/plain, */*',
                 'Accept-Language': 'zh-cn',
-                'Referer': url,
-                'User-Agent': JD_UA,
+                'Referer': 'https://plogin.m.jd.com/login/login?appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport',
+                'User-Agent': 'jdapp;android;9.3.5;10;2346663656561603-4353564623932316;network/wifi;model/ONEPLUS A5010;addressid/138709979;aid/2dfceea045ed292a;oaid/;osVer/29;appBuild/86390;partner/jingdong;eufv/1;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36',
                 'Host': 'plogin.m.jd.com'
-              }
+            }
         });
 
         praseSetCookies(response)
-    }
-    catch (error) {
+    } catch (error) {
         cookies = "";
         console.log(error.response.body);
     }
@@ -112,8 +106,6 @@ async function step2() {
             return 0
         }
         let timeStamp = (new Date()).getTime()
-        let loginurl = 'https://plogin.m.jd.com/cgi-bin/mm/new_login_entrance?lang=chs&appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport'
-        
         let url = 'https://plogin.m.jd.com/cgi-bin/m/tmauthreflogurl?s_token=' + s_token + '&v=' + timeStamp + '&remember=true'
         const response = await got.post(url, {
             responseType: 'json',
@@ -121,24 +113,21 @@ async function step2() {
                 'lang': 'chs',
                 'appid': 300,
                 'returnurl': 'https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action',
-                'source': 'wq_passport',
                 'source': 'wq_passport'
             },
             headers: {
                 'Connection': 'Keep-Alive',
                 'Content-Type': 'application/x-www-form-urlencoded; Charset=UTF-8',
-                'Cookie': cookies,
                 'Accept': 'application/json, text/plain, */*',
-                'Accept-Language': 'zh-cn',
-                'Referer': loginurl,
-                'User-Agent': JD_UA,
-                'Host': 'plogin.m.jd.com'
+                'Cookie': cookies,
+                'Referer': 'https://plogin.m.jd.com/login/login?appid=300&returnurl=https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport',
+                'User-Agent': 'jdapp;android;9.3.5;10;2346663656561603-4353564623932316;network/wifi;model/ONEPLUS A5010;addressid/138709979;aid/2dfceea045ed292a;oaid/;osVer/29;appBuild/86390;partner/jingdong;eufv/1;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36',
+                'Host': 'plogin.m.jd.com',
             }
         });
         token = response.body.token
         okl_token = response.headers['set-cookie'][0]
         okl_token = okl_token.substring(okl_token.indexOf("=") + 1, okl_token.indexOf(";"))
-        cookies=
         var qrUrl = 'https://plogin.m.jd.com/cgi-bin/m/tmauth?appid=300&client_type=m&token=' + token;
         return qrUrl;
     } catch (error) {
@@ -150,29 +139,27 @@ async function step2() {
 var i = 0;
 
 async function checkLogin() {
-
     try {
         if (cookies == "") {
             return 0
         }
         let timeStamp = (new Date()).getTime()
-        let logurl=`https://plogin.m.jd.com/cgi-bin/mm/new_login_entrance?lang=chs&appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=${timeStamp}&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport`
         let url = 'https://plogin.m.jd.com/cgi-bin/m/tmauthchecktoken?&token=' + token + '&ou_state=0&okl_token=' + okl_token;
         const response = await got.post(url, {
             responseType: 'json',
             form: {
                 lang: 'chs',
                 appid: 300,
-                returnurl: 'https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action',
+                returnurl: 'https://wqlogin2.jd.com/passport/LoginRedirect?state=1100399130787&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action',
                 source: 'wq_passport'
             },
             headers: {
-                'Referer': logurl,
+                'Referer': 'https://plogin.m.jd.com/login/login?appid=300&returnurl=https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport',
                 'Cookie': cookies,
                 'Connection': 'Keep-Alive',
                 'Content-Type': 'application/x-www-form-urlencoded; Charset=UTF-8',
                 'Accept': 'application/json, text/plain, */*',
-                'User-Agent': JD_UA,
+                'User-Agent': 'jdapp;android;9.3.5;10;2346663656561603-4353564623932316;network/wifi;model/ONEPLUS A5010;addressid/138709979;aid/2dfceea045ed292a;oaid/;osVer/29;appBuild/86390;partner/jingdong;eufv/1;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36',
             }
         });
 
@@ -180,11 +167,7 @@ async function checkLogin() {
     } catch (error) {
         console.log(error.response.body);
         let res = {}
-        res.body = {
-            check_ip: 0,
-            errcode: 222,
-            message: '出错'
-        }
+        res.body = { check_ip: 0, errcode: 222, message: '出错' }
         res.headers = {}
         return res;
     }
@@ -304,35 +287,14 @@ function getLastModifyFilePath(dir) {
 
 
 var app = express();
-// gzip压缩
-app.use(compression({
-    level: 6,
-    filter: shouldCompress
-}));
-
-function shouldCompress(req, res) {
-    if (req.headers['x-no-compression']) {
-        // don't compress responses with this request header
-        return false;
-    }
-
-    // fallback to standard filter function
-    return compression.filter(req, res);
-}
-
 app.use(session({
     secret: 'secret',
     name: `connect.${Math.random()}`,
     resave: true,
     saveUninitialized: true
 }));
-app.use(bodyParser.json({
-    limit: '50mb'
-}));
-app.use(bodyParser.urlencoded({
-    limit: '50mb',
-    extended: true
-}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 /**
@@ -368,29 +330,16 @@ app.get('/qrcode', function (request, response) {
                 await step1();
                 const qrurl = await step2();
                 if (qrurl != 0) {
-                    response.send({
-                        err: 0,
-                        msg:"123",
-                        qrcode: qrurl
-                    });
+                    response.send({ err: 0, qrcode: qrurl });
                 } else {
-                    response.send({
-                        err: 1,
-                        msg: "错误"
-                    });
+                    response.send({ err: 1, msg: "错误" });
                 }
             } catch (err) {
-                response.send({
-                    err: 1,
-                    msg: err
-                });
+                response.send({ err: 1, msg: err });
             }
         })();
     } else {
-        response.send({
-            err: 1,
-            msg: loginFaild
-        });
+        response.send({ err: 1, msg: loginFaild });
     }
 })
 
@@ -405,28 +354,16 @@ app.get('/cookie', function (request, response) {
                 const cookie = await checkLogin();
                 if (cookie.body.errcode == 0) {
                     let ucookie = getCookie(cookie);
-                    response.send({
-                        err: 0,
-                        cookie: ucookie
-                    });
+                    response.send({ err: 0, cookie: ucookie });
                 } else {
-                    response.send({
-                        err: cookie.body.errcode,
-                        msg: cookie.body.message
-                    });
+                    response.send({ err: cookie.body.errcode, msg: cookie.body.message });
                 }
             } catch (err) {
-                response.send({
-                    err: 1,
-                    msg: err
-                });
+                response.send({ err: 1, msg: err });
             }
         })();
     } else {
-        response.send({
-            err: 1,
-            msg: loginFaild
-        });
+        response.send({ err: 1, msg: loginFaild });
     }
 })
 
@@ -446,6 +383,10 @@ app.get('/api/config/:key', function (request, response) {
                     break;
                 case 'crontab':
                     content = getFileContentByName(crontabFile);
+                    break;
+                case 'shareCode':
+                    let shareCodeFile = getLastModifyFilePath(shareCodeDir);
+                    content = getFileContentByName(shareCodeFile);
                     break;
                 case 'diy':
                     content = getFileContentByName(diyFile);
@@ -488,6 +429,18 @@ app.get('/diff', function (request, response) {
 });
 
 /**
+ * Share Code 页面
+ */
+app.get('/shareCode', function (request, response) {
+    if (request.session.loggedin) {
+        response.sendFile(path.join(__dirname + '/public/shareCode.html'));
+    } else {
+        response.redirect('/');
+    }
+
+});
+
+/**
  * crontab 配置页面
  */
 app.get('/crontab', function (request, response) {
@@ -522,51 +475,27 @@ app.get('/run', function (request, response) {
     }
 });
 
-app.post('/runCmd', function (request, response) {
+app.post('/runCmd', function(request, response) {
     if (request.session.loggedin) {
-        const cmd = `cd ${rootPath};` + request.body.cmd;
+        const cmd = request.body.cmd;
         const delay = request.body.delay || 0;
         // console.log('before exec');
-        // exec maxBuffer 20MB
-        exec(cmd, {
-            maxBuffer: 1024 * 1024 * 20
-        }, (error, stdout, stderr) => {
+        exec(cmd, (error, stdout, stderr) => {
             // console.log(error, stdout, stderr);
             // 根据传入延时返回数据，有时太快会出问题
             setTimeout(() => {
                 if (error) {
                     console.error(`执行的错误: ${error}`);
-                    response.send({
-                        err: 1,
-                        msg: stdout ? `${stdout}${error}` : `${error}`
-                    });
-                    return;
+                    response.send({ err: 1, msg: '执行出错！' });
 
-                }
-
-                if (stdout) {
+                } else if (stdout) {
                     // console.log(`stdout: ${stdout}`)
-                    response.send({
-                        err: 0,
-                        msg: `${stdout}`
-                    });
-                    return;
+                    response.send({ err: 0, msg: `${stdout}` });
 
-                }
-
-                if (stderr) {
+                } else if (stderr) {
                     console.error(`stderr: ${stderr}`);
-                    response.send({
-                        err: 1,
-                        msg: `${stderr}`
-                    });
-                    return;
+                    response.send({ err: 1, msg: `${stderr}` });
                 }
-
-                response.send({
-                    err: 0,
-                    msg: '执行结束，无结果返回。'
-                });
             }, delay);
         });
     } else {
@@ -579,14 +508,9 @@ app.post('/runCmd', function (request, response) {
  */
 app.get('/runLog/:jsName', function (request, response) {
     if (request.session.loggedin) {
-        const jsName = request.params.jsName;
-        let shareCodeFile = getLastModifyFilePath(path.join(rootPath, `log/${jsName}/`));
-        if (jsName === 'rm_log') {
-            shareCodeFile = path.join(rootPath, `log/${jsName}.log`)
-        }
-
+        let shareCodeFile = getLastModifyFilePath(path.join(rootPath, `log/${request.params.jsName}/`));
         if (shareCodeFile) {
-            const content = getFileContentByName(shareCodeFile);
+            content = getFileContentByName(shareCodeFile);
             response.setHeader("Content-Type", "text/plain");
             response.send(content);
         } else {
@@ -611,20 +535,12 @@ app.post('/auth', function (request, response) {
             if (username == con.user && password == con.password) {
                 request.session.loggedin = true;
                 request.session.username = username;
-                response.send({
-                    err: 0
-                });
+                response.send({ err: 0 });
             } else {
-                response.send({
-                    err: 1,
-                    msg: authError
-                });
+                response.send({ err: 1, msg: authError });
             }
         } else {
-            response.send({
-                err: 1,
-                msg: "请输入用户名密码!"
-            });
+            response.send({ err: 1, msg: "请输入用户名密码!" });
         }
     });
 
@@ -644,22 +560,13 @@ app.post('/changepass', function (request, response) {
         if (username && password) {
             fs.writeFile(authConfigFile, JSON.stringify(config), function (err) {
                 if (err) {
-                    response.send({
-                        err: 1,
-                        msg: "写入错误请重试!"
-                    });
+                    response.send({ err: 1, msg: "写入错误请重试!" });
                 } else {
-                    response.send({
-                        err: 0,
-                        msg: "更新成功!"
-                    });
+                    response.send({ err: 0, msg: "更新成功!" });
                 }
             });
         } else {
-            response.send({
-                err: 1,
-                msg: "请输入用户名密码!"
-            });
+            response.send({ err: 1, msg: "请输入用户名密码!" });
         }
 
     } else {
@@ -686,17 +593,9 @@ app.post('/api/save', function (request, response) {
         let postContent = request.body.content;
         let postfile = request.body.name;
         saveNewConf(postfile, postContent);
-        response.send({
-            err: 0,
-            title: "保存成功! ",
-            msg: "将自动刷新页面查看修改后的 " + postfile + " 文件"
-        });
+        response.send({ err: 0, title: "保存成功! ", msg: "将自动刷新页面查看修改后的 " + postfile + " 文件" });
     } else {
-        response.send({
-            err: 1,
-            title: "保存失败! ",
-            msg: loginFaild
-        });
+        response.send({ err: 1, title: "保存失败! ", msg: loginFaild });
     }
 
 });
@@ -740,9 +639,7 @@ app.get('/api/logs', function (request, response) {
             dirName: '@',
             files: rootFiles
         });
-        var result = {
-            dirs
-        };
+        var result = { dirs };
         response.send(result);
 
     } else {
@@ -802,7 +699,7 @@ app.get('/api/scripts', function (request, response) {
                 if (excludeRegExp.test(fileList[i])) {
                     continue;
                 }
-
+                
                 var dirMap = {
                     dirName: fileList[i],
                     files: fileListTmp
@@ -812,7 +709,7 @@ app.get('/api/scripts', function (request, response) {
                 if (excludeRegExp.test(fileList[i])) {
                     continue;
                 }
-
+                
                 rootFiles.push(fileList[i]);
             }
         }
@@ -821,9 +718,7 @@ app.get('/api/scripts', function (request, response) {
             dirName: '@',
             files: rootFiles
         });
-        var result = {
-            dirs
-        };
+        var result = { dirs };
         response.send(result);
 
     } else {
