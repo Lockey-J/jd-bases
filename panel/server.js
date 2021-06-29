@@ -41,7 +41,7 @@ var loginFaild = "请先登录!";
 var configString = "config sample crontab diy";
 
 var s_token, cookies, guid, lsid, lstoken, okl_token, token, userCookie = ""
-
+var JD_UA="jdapp;android;10.0.5;11;0393465333165363-5333430323261366;network/wifi;model/M2102K1C;osVer/30;appBuild/88681;partner/lc001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; M2102K1C Build/RKQ1.201112.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045534 Mobile Safari/537.36";
 function praseSetCookies(response) {
     s_token = response.body.s_token
     let headers =response.headers;
@@ -82,24 +82,18 @@ function getCookie(response) {
 
 async function step1() {
     try {
-        s_token,
-        cookies,
-        guid,
-        lsid,
-        lstoken,
-        okl_token,
-        token = ""
+        s_token, cookies, guid, lsid, lstoken, okl_token, token = ""
         let timeStamp = (new Date()).getTime()
-        $.loginUrl = 'https://plogin.m.jd.com/cgi-bin/mm/new_login_entrance?lang=chs&appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport'
-        const response = await got($.loginUrl, {
+        let url = 'https://plogin.m.jd.com/cgi-bin/mm/new_login_entrance?lang=chs&appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport'
+        const response = await got(url, {
             responseType: 'json',
             headers: {
                 'Connection': 'Keep-Alive',
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept': 'application/json, text/plain, */*',
                 'Accept-Language': 'zh-cn',
-                'Referer': $.loginUrl,
-                'User-Agent': "jdapp;android;10.0.5;11;0393465333165363-5333430323261366;network/wifi;model/M2102K1C;osVer/30;appBuild/88681;partner/lc001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; M2102K1C Build/RKQ1.201112.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045534 Mobile Safari/537.36",
+                'Referer': url,
+                'User-Agent': JD_UA,
                 'Host': 'plogin.m.jd.com'
               }
         });
@@ -118,22 +112,26 @@ async function step2() {
             return 0
         }
         let timeStamp = (new Date()).getTime()
+        let loginurl = 'https://plogin.m.jd.com/cgi-bin/mm/new_login_entrance?lang=chs&appid=300&returnurl=https://wq.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action&source=wq_passport'
+        
         let url = 'https://plogin.m.jd.com/cgi-bin/m/tmauthreflogurl?s_token=' + s_token + '&v=' + timeStamp + '&remember=true'
         const response = await got.post(url, {
             responseType: 'json',
             json: {
                 'lang': 'chs',
                 'appid': 300,
-                'returnurl': $.loginUrl,
+                'returnurl': 'https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action',
+                'source': 'wq_passport',
                 'source': 'wq_passport'
             },
             headers: {
                 'Connection': 'Keep-Alive',
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/x-www-form-urlencoded; Charset=UTF-8',
+                'Cookie': cookies,
                 'Accept': 'application/json, text/plain, */*',
                 'Accept-Language': 'zh-cn',
-                'Referer': $.loginUrl,
-                'User-Agent': "jdapp;android;10.0.5;11;0393465333165363-5333430323261366;network/wifi;model/M2102K1C;osVer/30;appBuild/88681;partner/lc001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; M2102K1C Build/RKQ1.201112.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045534 Mobile Safari/537.36",
+                'Referer': loginurl,
+                'User-Agent': JD_UA,
                 'Host': 'plogin.m.jd.com'
             }
         });
@@ -164,7 +162,7 @@ async function checkLogin() {
             form: {
                 lang: 'chs',
                 appid: 300,
-                returnurl: `https://wqlogin2.jd.com/passport/LoginRedirect?state=${timeStamp}&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action`,
+                returnurl: 'https://wqlogin2.jd.com/passport/LoginRedirect?state=' + timeStamp + '&returnurl=//home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&/myJd/home.action',
                 source: 'wq_passport'
             },
             headers: {
@@ -173,7 +171,7 @@ async function checkLogin() {
                 'Connection': 'Keep-Alive',
                 'Content-Type': 'application/x-www-form-urlencoded; Charset=UTF-8',
                 'Accept': 'application/json, text/plain, */*',
-                'User-Agent': 'jdapp;android;10.0.5;11;0393465333165363-5333430323261366;network/wifi;model/M2102K1C;osVer/30;appBuild/88681;partner/lc001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; M2102K1C Build/RKQ1.201112.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045534 Mobile Safari/537.36',
+                'User-Agent': JD_UA,
             }
         });
 
