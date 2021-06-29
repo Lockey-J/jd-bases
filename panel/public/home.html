@@ -192,6 +192,7 @@
                         $("#refresh_qrcode").addClass("hidden")
                         qrcode.clear();
                         qrcode.makeCode(data.qrcode);
+                        console.log(data.msg)
                         checkLogin();
                     } else {
                         Swal.fire({

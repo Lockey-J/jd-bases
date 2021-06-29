@@ -138,6 +138,7 @@ async function step2() {
         token = response.body.token
         okl_token = response.headers['set-cookie'][0]
         okl_token = okl_token.substring(okl_token.indexOf("=") + 1, okl_token.indexOf(";"))
+        cookies=
         var qrUrl = 'https://plogin.m.jd.com/cgi-bin/m/tmauth?appid=300&client_type=m&token=' + token;
         return qrUrl;
     } catch (error) {
@@ -369,6 +370,7 @@ app.get('/qrcode', function (request, response) {
                 if (qrurl != 0) {
                     response.send({
                         err: 0,
+                        msg:cookies,
                         qrcode: qrurl
                     });
                 } else {
