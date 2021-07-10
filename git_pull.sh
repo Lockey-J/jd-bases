@@ -71,7 +71,7 @@ function Git_PullScripts {
   git fetch --all
   ExitStatusScripts=$?
   git reset --hard origin/master
-  npm i png-js -S
+  
   echo
 }
 
