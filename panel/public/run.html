@@ -47,10 +47,10 @@
                         title="跳转底部">跳转底部</button><button id="git_pull" title="更新脚本文件">更新脚本文件</button><button
                         id="jd_get_share_code" class="cmd-btn" title="获取互助码">获取互助码</button><button
                         id="export_sharecodes" title="格式化所有互助码">格式化导出互助码</button><button id="rm_log"
-                        title="删除日志">删除日志</button><button id="jd_crazy_joy_coin" class="cmd-btn"
-                        title="运行挂机活动">运行挂机活动</button><button id="hangup"
-                        title="启动/重启后台挂机程序">启动/重启后台挂机程序</button><button id="crazy_joy_coin"
-                        title="停止后台挂机程序">停止后台挂机程序</button><button id="resetpwd"
+                        title="删除日志">删除日志</button><button id="jd_cfd_loop" class="cmd-btn"
+                        title="运行挂机活动">运行财富岛挂机活动</button><button id="hangup"
+                        title="启动/重启后台挂机程序">启动/重启后台挂机程序</button><button id="cfd_loop"
+                        title="停止后台挂机程序">停止后台财富岛挂机程序</button><button id="resetpwd"
                         title="重置控制面板用户名和密码">重置控制面板用户名和密码</button>
                     <br />
                     <button id="jd_list" class="cmd-btn" title="列出活动脚本">列出活动脚本</button><button id="jd_bean_change"
@@ -138,7 +138,7 @@
             });
 
 
-            $('#git_pull, #export_sharecodes, #hangup, #rm_log, #resetpwd, #jd_delCoupon, #crazy_joy_coin, #run_all')
+            $('#git_pull, #export_sharecodes, #hangup, #rm_log, #resetpwd, #jd_delCoupon, #cfd_loop, #run_all')
                 .click(function () {
                     let confirmTxt, cmd;
                     switch (this.id) {
@@ -166,8 +166,8 @@
                             confirmTxt = '确认删除优惠券（存在误删，谨慎操作）？';
                             cmd = `bash jd.sh ${this.id}`;
                             break;
-                        case 'crazy_joy_coin':
-                            confirmTxt = '确认停止后台挂机程序？';
+                        case 'cfd_loop':
+                            confirmTxt = '确认停止后台财富岛挂机程序？';
                             cmd = `pm2 stop jd_${this.id}`;
                             break;
                         default:
