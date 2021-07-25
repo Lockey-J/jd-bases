@@ -156,7 +156,7 @@ function Set_Env() {
 function Random_Delay() {
   if [[ -n ${RandomDelay} ]] && [[ ${RandomDelay} -gt 0 ]]; then
     CurMin=$(date "+%-M")
-    if [[ ${CurMin} -gt 2 && ${CurMin} -lt 30 ]] || [[ ${CurMin} -gt 31 && ${CurMin} -lt 59 ]]; then
+    if [[ ${CurMin} -gt 2 && ${CurMin} -lt 30 ]] || [[ ${CurMin} -gt 31 && ${CurMin} -lt 58 ]]; then
       CurDelay=$((${RANDOM} % ${RandomDelay} + 1))
       echo -e "\n命令未添加 \"now\"，随机延迟 ${CurDelay} 秒后再执行任务，如需立即终止，请按 CTRL+C...\n"
       sleep ${CurDelay}
