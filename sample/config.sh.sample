@@ -1,7 +1,7 @@
-## Version: v3.28.7
-## Date: 2021-07-09
+## Version: v3.28.8
+## Date: 2021-07-25
 
-## Update Content: 增加燃动夏季summer_movement_joinjoinjoinhui 变量。
+## Update Content: 增加宠汪汪验证码缓存数环境变量。
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
 ## 如需更新，请参考WIKI（https://github.com/EvineDeng/jd-base/wiki）中"如何更新配置文件"部分的操作说明，进行智能比对后修改。
@@ -365,23 +365,6 @@ ForOtherSgmh4=""
 ForOtherSgmh5=""
 ForOtherSgmh6=""
 
-################################## 定义手机狂欢城互助码（选填） ##################################
-## 具体填法及要求详见本文件最下方“互助码填法示例”
-MyJD8181=""
-MyJD8182=""
-MyJD8183=""
-MyJD8184=""
-MyJD8185=""
-MyJD8186=""
-MyJD818A=""
-MyJD818B=""
-
-ForOtherJD8181=""
-ForOtherJD8182=""
-ForOtherJD8183=""
-ForOtherJD8184=""
-ForOtherJD8185=""
-ForOtherJD8186=""
 
 ################################## 定义京喜财富岛互助码（选填） ##################################
 ## 具体填法及要求详见本文件最下方“互助码填法示例”
@@ -578,10 +561,10 @@ export UN_BIND_STOP_CARD=""
 
 ################################## 疯狂的JOY（选填） ##################################
 ## 疯狂的JOY循环助力，"true" 表示循环助力，"false" 表示不循环助力，默认 "false"
-export JDJOY_HELPSELF=""
+#export JDJOY_HELPSELF=""
 
 ## 疯狂的JOY京豆兑换，目前最小值为500/1000京豆，默认为 "0" 不开启京豆兑换
-export JDJOY_APPLYJDBEAN=""
+#export JDJOY_APPLYJDBEAN=""
 
 ## 疯狂的JOY自动购买什么等级的JOY，如需要使用请自行解除注释
 # export BUY_JOY_LEVEL=""
@@ -602,8 +585,12 @@ export JD_IMMORTAL_LATLON=''
 ################################## 燃动夏季自定义变量（选填） ##################################
 ## 
 ## 示例：export summer_movement_joinjoinjoinhui="true"
-export summer_movement_joinjoinjoinhui="false"
+#export summer_movement_joinjoinjoinhui="false"
 
+################################## 宠汪汪验证码缓存环境变量（选填） ##################################
+## 默认10，有多少账号就填多少
+## 示例：export validate_num="10"
+export validate_num="10"
 
 ################################## Telegram 代理（选填） ##################################
 ## Telegram 代理的 IP，代理类型为 http，比如你代理是 http://127.0.0.1:1080，则填写 "127.0.0.1"
