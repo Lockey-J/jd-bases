@@ -1,7 +1,7 @@
-## Version: v3.29.0
-## Date: 2021-07-26
+## Version: v3.3.0
+## Date: 2021-09-3
 
-## Update Content: 请在定时任务中jd_Getcwwvalidate此任务后面加上空格 now ，使之不延时执行。不知道怎么配置可以docker.list.sample将全部内容复制到定时任务上。
+## Update Content: 更新定时新获取CK方式，
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
 ## 如需更新，请参考WIKI（https://github.com/EvineDeng/jd-base/wiki）中"如何更新配置文件"部分的操作说明，进行智能比对后修改。
@@ -33,7 +33,14 @@ Cookie4=""
 Cookie5=""
 Cookie6=""
 
-
+################################## 定义高权限Cookie（选填） ##################################
+#填入格式wskey=XXXX;pt_pin=XXXX; 注意有个分号都要加上
+wsCookie1=""
+wsCookie2=""
+wsCookie3=""
+wsCookie4=""
+wsCookie5=""
+wsCookie6=""
 ################################## 临时屏蔽某个Cookie（选填） ##################################
 ## 如果某些Cookie已经失效了，但暂时还没法更新，可以使用此功能在不删除该Cookie和重新修改Cookie编号的前提下，临时屏蔽掉某些编号的Cookie
 ## 多个Cookie编号以半角的空格分隔，两侧一对半角双引号，使用此功能后，在运行js脚本时账户编号将发生变化
