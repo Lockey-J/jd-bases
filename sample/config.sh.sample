@@ -1,7 +1,7 @@
-## Version: v3.3.0
+## Version: v3.3.1
 ## Date: 2021-09-3
 
-## Update Content: 更新定时新获取CK方式，
+## Update Content: 更新定时新获取CK方式，使用手机抓包提取wskey 跟pt_pin，
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
 ## 如需更新，请参考WIKI（https://github.com/EvineDeng/jd-base/wiki）中"如何更新配置文件"部分的操作说明，进行智能比对后修改。
