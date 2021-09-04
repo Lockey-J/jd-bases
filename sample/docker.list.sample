@@ -75,4 +75,4 @@
 5 0 * * * bash jd jd_industryLottery
 20 0,20 * * * bash jd jd_wish
 11 0 * * * bash jd jd_ccSign
-42,1-23/4 * * * bash jd jd_updateCookie
+47 0-23/4 * * * bash jd jd_updateCookie now
